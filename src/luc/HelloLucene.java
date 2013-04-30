@@ -46,6 +46,7 @@ public static void main(String[] args) throws IOException, ParseException {
     //*****************READING IN AND ADDING DOCUMENTS*****************************//
     for (File file : listOfFiles) {
         if (file.isFile()) {
+//        	System.out.println(file.getName());
             Titles.add(file.getName());
         }
     }
@@ -53,9 +54,8 @@ public static void main(String[] args) throws IOException, ParseException {
     
 	BufferedReader r = null;
 	IndexWriter w = new IndexWriter(index, config);
+	int linenum = 0;
 
-
-	
     for(String s : Titles){
     	try
 		{
@@ -67,13 +67,14 @@ public static void main(String[] args) throws IOException, ParseException {
 		}
 		String line = r.readLine();	
 		String title = new String(line);
-		System.out.println("printing first line of " + title);
+		System.out.println(title);
+		linenum = 0;
 		while(line != null){
 			line = r.readLine();
-			System.out.println("line:");
-			System.out.println(line);
-			if(line != null)
-				addDoc(w, line, title);
+			if(line != null){
+				addDoc(w, line, (title + " line: " + Integer.toString(linenum) ));
+				linenum++;
+			}
 		}
     }
 
@@ -87,14 +88,14 @@ public static void main(String[] args) throws IOException, ParseException {
 
     //**************************************************************************************//
     // 2. query
-    String querystr = args.length > 0 ? args[0] : "Sherlock";
+    String querystr = args.length > 0 ? args[0] : "watson";
 
     // the "title" arg specifies the default field to use
     // when no field is explicitly specified in the query.
     Query q = new QueryParser(Version.LUCENE_40, "title", analyzer).parse(querystr);
 
     // 3. search
-    int hitsPerPage = 10;
+    int hitsPerPage = 40;
     IndexReader reader = DirectoryReader.open(index);
     IndexSearcher searcher = new IndexSearcher(reader);
     TopScoreDocCollector collector = TopScoreDocCollector.create(hitsPerPage, true);
