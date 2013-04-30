@@ -46,7 +46,6 @@ public static void main(String[] args) throws IOException, ParseException {
     //*****************READING IN AND ADDING DOCUMENTS*****************************//
     for (File file : listOfFiles) {
         if (file.isFile()) {
-//        	System.out.println(file.getName());
             Titles.add(file.getName());
         }
     }
@@ -56,6 +55,7 @@ public static void main(String[] args) throws IOException, ParseException {
 	IndexWriter w = new IndexWriter(index, config);
 	int linenum = 0;
 
+	System.out.println("Titles being indexed:");
     for(String s : Titles){
     	try
 		{
@@ -77,25 +77,21 @@ public static void main(String[] args) throws IOException, ParseException {
 			}
 		}
     }
+    System.out.println();
 
-
-//    addDoc(w, "Lucene in Action", "193398817");
-//    addDoc(w, "Lucene for Dummies", "55320055Z");
-//    addDoc(w, "Managing Gigabytes", "55063554A");
-//    addDoc(w, "The Art of Computer Science", "9900333X");
-//    addDoc(w, "Poop", "6");
     w.close();
 
     //**************************************************************************************//
     // 2. query
-    String querystr = args.length > 0 ? args[0] : "watson";
+//    String querystr = args.length > 0 ? args[0] : "\"No, I couldn't do it, Watson,\"";
+    String querystr = args.length > 0 ? args[0] : "butt";
 
     // the "title" arg specifies the default field to use
     // when no field is explicitly specified in the query.
     Query q = new QueryParser(Version.LUCENE_40, "title", analyzer).parse(querystr);
 
     // 3. search
-    int hitsPerPage = 40;
+    int hitsPerPage = 1000000;
     IndexReader reader = DirectoryReader.open(index);
     IndexSearcher searcher = new IndexSearcher(reader);
     TopScoreDocCollector collector = TopScoreDocCollector.create(hitsPerPage, true);
